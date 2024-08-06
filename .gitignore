@@ -4,6 +4,9 @@
 *.log
 *~
 #--------
+hycom/MSCPROGS/src/Hyc2proj/TMP/
+hycom/MSCPROGS/src/IceDriftNC/TMP/
+#--------
 #--------
 hycom/MSCPROGS/bin*/
 hycom/MSCPROGS/bin/
