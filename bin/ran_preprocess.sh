@@ -113,7 +113,6 @@ export IDM=$(blkdat_get blkdat.input idm)
 export JDM=$(blkdat_get blkdat.input jdm)
 export LWFLAG=`grep "'lwflag' =" blkdat.input | awk '{printf("%1d", $1)}'`
 
-export HRIVER=$(grep "highfq_river" ../hycom_opt | awk -F= '{printf("%s", $2)}' | tr -d ' \t\r\n')
 restarti=$(blkdat_get_string blkdat.input nmrsti "restart_in")
 
 # Add period to restart file name if not present...
@@ -150,7 +149,6 @@ echo "Fetched from blkdat.input:"
 echo "--------------------------"
 echo "EB     is $EB    "
 echo "PRIVER is $PRIVER"
-echo "HRIVER is $HRIVER"
 echo "YRFLAG is $YRFLAG"
 echo "JERLV  is $JERLV "
 echo "SSS    is $SSSRLX"
@@ -407,25 +405,7 @@ if [ $PRIVER -eq 1 ] ; then
    fi
 fi
 
-if [ "$HRIVER" = ".true." ]; then
-  echo "Note: PRIVER must be 0 for highfq_river=true " 
-  echo "highfq_river=true: **Setting up high frequency river forcing  from hycom_opt highfq_river"
-  # Check range of file against start and stop times
-  RDIR=$BASEDIR/force/rivers/$E
-  if [ -f  $RDIR/riverh.a -a  -f $RDIR/riverh.b ] 
-  then
-     ln -sf $RDIR/riverh.a forcing.riverh.a || tellerror "Could not get riverh .a file"
-     ln -sf $RDIR/riverh.b forcing.riverh.b || tellerror "Could not get riverh .b file"
-     frcstart=$(head -n  6 forcing.riverh.b | tail -n1 | sed "s/.*=//" | sed "s/^[ ]*//" | cut -d " " -f 1)
-     frcstop=$(tail -n 1 forcing.riverh.b             | sed "s/.*=//" | sed "s/^[ ]*//" | cut -d " " -f 1)
-     test1=$(echo ${tstart#-}'>='$frcstart | bc -l)
-     test2=$(echo $tstop '<='$frcstop  | bc -l)
-     [ $test1 -eq 1 ] || tellerror "File $S/forcing.riverh.b: forcing starts after  model starts"
-     [ $test2 -eq 1 ] || tellerror "File $S/forcing.riverh.b: forcing stops  before model stops"
-  fi
-else
-    echo "highfq_river=false: No attemp to use high frequency river runnoff"
-fi
+
 #
 # --- kpar forcing
 #
@@ -474,13 +454,8 @@ if [ $TRCRLX -ne 0 -o $NTRACR -eq -1 ] ; then
    ln -sf $BASEDIR/relax/${E}/relax_rmu.a relax.rmutr.a  || tellerror "Could not get relax.rmutr.a"
    ln -sf $BASEDIR/relax/${E}/relax_rmu.b relax.rmutr.b  || tellerror "Could not get relax.rmutr.b"
 
-   if [ $DOWNSCALING == "yes" ] ; then
-     [ ! -f  $INPUTDIR/co2_annmean_gl.txt ] && tellerror "$INPUTDIR/co2_annmean_gl.txt does not exist"
-     ln -sf $INPUTDIR/co2_annmean_${DS_scenario}.txt co2_annmean_gl.txt || tellerror "Could not get co2_annmean_gl.txt"
-   else
-     [ ! -f  $INPUTDIR/co2_annmean_gl.txt ] && tellerror "$INPUTDIR/co2_annmean_gl.txt does not exist"
-     ln -sf $INPUTDIR/co2_annmean_gl.txt co2_annmean_gl.txt || tellerror "Could not get co2_annmean_gl.txt"
-   fi 
+   [ ! -f  $INPUTDIR/co2_annmean_gl.txt ] && tellerror "$INPUTDIR/co2_annmean_gl.txt does not exist"
+   ln -sf $INPUTDIR/co2_annmean_gl.txt co2_annmean_gl.txt || tellerror "Could not get co2_annmean_gl.txt"
 fi
 #
 # - thermobaric reference state?
@@ -524,10 +499,6 @@ if [ ${testveldf4} -eq 1 ] ; then
    ${pget} ${D}/../../relax/${E}/veldf4.b veldf4.b  || tellerror "Could not get veldf4.b"
 fi
 
-# Check hycom optional file: hycom_opt
-echo "Checking the access to hycom_opt"
-[ -s ./hycom_opt ] && rm ./hycom_opt
-${pget} ../hycom_opt hycom_opt || { tellerror "Could not get ../hycom_opt"; exit 1; }
 
 # TODO Limited set of tests for now. 
 # Link in nest dir if nesting activated
@@ -538,11 +509,11 @@ tmp2=$(echo $NESTFQ'!='0.0 | bc -l)
 if [ $tmp -eq 1 -o $tmp2 -eq 1 ] ; then
    nestdir=$BASEDIR/nest/$E
    echo "Nesting input from $nestdir"
-   ls sest
+   ls nest
    if [ -d $nestdir ]  ; then
       [ -e nest ] && rm nest
       ln -s $nestdir nest
-   else
+   else 
       tellerror "Nesting dir $nest does not exist"
    fi
 fi
@@ -576,29 +547,29 @@ elif [ $tmp -eq 1 -a $LBFLAG -eq 1 ] ; then
    cp $P/ports.input . || tellerror "Could not get port file ${P}/ports.input for port flow"
 elif [ $tmp -eq 1 -a $LBFLAG -eq 2 ] ; then
    # Nest flow - use file in  experiment dir if present. Otherwise look in nest dir
-   if [ -f $P/ports.input ] ; then
-      echo "Using file $P/ports.input for nesting: $P/ports.input -> ./ports.input"
-      cp $P/ports.input ports.input       || tellerror "Could not get port file ${P}/ports.input for nest flow"
-   elif [ -f $nestdir/ports.input ] ; then
-      echo "Using file $nestdir/ports.input for nesting: $P/ports.input -> ./ports.input"
-      cp $nestdir/ports.input ports.input || tellerror "Could not get port file ${nestdir}/ports.input for nest flow"
+   if [ -f $P/ports.nest ] ; then
+      echo "Using file $P/ports.nest for nesting: $P/ports.nest -> ./ports.input"
+      cp $P/ports.nest ports.input       || tellerror "Could not get port file ${P}/ports.nest for nest flow"
+   elif [ -f $nestdir/ports.nest ] ; then
+      echo "Using file $nestdir/ports.nest for nesting: $P/ports.nest -> ./ports.input"
+      cp $nestdir/ports.nest ports.input || tellerror "Could not get port file ${nestdir}/ports.nest for nest flow"
    else 
-      tellerror "Could not get port file ports.input in $P or  ${nestdir} for nest flow"
+      tellerror "Could not get port file ports.nest in $P or  ${nestdir} for nest flow"
    fi
 fi
 
 # Need nest rmu in this case:
 if [ $tmp2 -eq 1  ] ; then
    # Nest relaxation - use file in  experiment dir if present. Otherwise look in nest dir
-   if [ -f $P/rmu.a -a -f $P/rmu.a ] ; then
-      echo "Using file $P/rmu.[ab] for nesting relaxation: $P/rmu.[ab] -> ./rmu.[ab]"
-      cp $P/rmu.a rmu.a       || tellerror "Could not get port file ${P}/rmu.a for nest relax"
-      cp $P/rmu.b rmu.b       || tellerror "Could not get port file ${P}/rmu.b for nest relax"
-   elif [ -f $nestdir/rmu.a -a -f $nestdir/rmu.a ] ; then
-      echo "Using file $nestdir/rmu.[ab] for nesting: $nestdir/rmu.[ab] -> ./rmu.[ab]"
-      cp $nestdir/rmu.a rmu.a       || tellerror "Could not get port file ${nestdir}/rmu.a for nest relax"
-      cp $nestdir/rmu.b rmu.b       || tellerror "Could not get port file ${nestdir}/rmu.b for nest relax"
-   fi
+#   if [ -f $P/rmu_nest.a -a -f $P/rmu_nest.a ] ; then
+#      echo "Using file $P/rmu_nest.[ab] for nesting relaxation: $P/rmu_nest.[ab] -> ./rmu.[ab]"
+#      cp $P/rmu_nest.a rmu.a       || tellerror "Could not get port file ${P}/rmu_nest.a for nest relax"
+#      cp $P/rmu_nest.b rmu.b       || tellerror "Could not get port file ${P}/rmu_nest.b for nest relax"
+#   elif [ -f $nestdir/rmu_nest.a -a -f $nestdir/rmu_nest.a ] ; then
+#      echo "Using file $nestdir/rmu_nest.[ab] for nesting: $nestdir/rmu_nest.[ab] -> ./rmu.[ab]"
+#      cp $nestdir/rmu_nest.a rmu.a       || tellerror "Could not get port file ${nestdir}/rmu_nest.a for nest relax"
+#      cp $nestdir/rmu_nest.b rmu.b       || tellerror "Could not get port file ${nestdir}/rmu_nest.b for nest relax"
+#   fi
   if [ -f $nestdir/rmu.a -a -f $nestdir/rmu.b ] ; then
       echo "Using file $nestdir/rmu.[ab] for nesting"
    else 
@@ -611,6 +582,11 @@ fi
 #if [ "$tideflag" == "T" ] ; then
 #   ${pget} ${BASEDIR}/tides_nersc/$E/${tidechoice}obc_elev.dat . || tellerror "Could not get tidal data ${tidechoice}obc_elev.dat "
 #fi
+   
+
+
+
+echo
 
 #
 # --- move old restart files to KEEP, typically from batch system rerun.
@@ -639,13 +615,7 @@ else
 
 #
 # --- Start compute Montg. on the go, to be sure it is computed from the right nesting file.
-# --- For operatinal runs and other rund where it is certain that there has been no 
-# --- changes to the model setup, this part should be commented out. 
-#
-# NOTE: Montg calculation block removed during rebase.
-#       Refer to old commit if needed.
-#
-# --- this is only for OLD TP5 nesting files
+#  this is only for OLD TP5 nesting files
 # --- End compute Montg. on the go, to be sure it is computed from the right nesting file.
 #     
    elif [ -f $D/${filename}_mem001.a -a -f $D/${filename}_mem001.b ]; then
