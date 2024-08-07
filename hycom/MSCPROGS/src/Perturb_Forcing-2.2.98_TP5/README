@@ -1,0 +1,13 @@
+Routines described in this README:
+
+force_perturb-2.2    - perturb existing forcing fields  with random forcing
+------------------
+In this directory is the routine force_perturb-2.2. This routine simply 
+adds time-dependent perturbations on existing forcing files. it reads
+infile2.in to get variances  of  random forcing ++, and applies them to
+existing forcing fields. Results are put in files with names a la 
+tst.forcing.airtmp.[ab]
+Revision history:
+c> May 2019 - The call method was inherited from forfun_nersc
+c> Oct 2019 - Tick off the net heatflux from ECMWF because they are not used by HYCOM_CICE
+c> May 2023 - Replace the perturabation strategies for shwflx/radflx by the same way for precipitation
