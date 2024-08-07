@@ -79,14 +79,14 @@ module mod_forcing_nersc
   integer, parameter :: &
      unit_uwind  =921, &
      unit_vwind  =922, &
-     unit_relhum =923, &
-     unit_clouds =924, &
+     unit_relhum =923, & 
+     unit_clouds =924, & 
      unit_slp    =925 
 
-!   integer, parameter :: nrunits=14
-!   integer, dimension(nrunits) :: units=                 &
-!       (/901,901,902,903,904,905,906,907,908,unit_relhum,&
-!         unit_uwind,unit_vwind,unit_clouds,unit_slp/)
+  integer, parameter :: nrunits=14
+  integer, dimension(nrunits) :: units=                 &
+       (/901,901,902,903,904,905,906,907,908,unit_relhum,&
+         unit_uwind,unit_vwind,unit_clouds,unit_slp/)
 
    private init_fvars_nersc
 

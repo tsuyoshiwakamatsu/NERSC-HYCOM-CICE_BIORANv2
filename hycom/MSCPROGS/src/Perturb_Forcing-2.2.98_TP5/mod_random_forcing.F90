@@ -256,6 +256,9 @@ contains
       real, parameter :: wlat=15.
       integer i,j
 
+      ! Scale for slp (hPa) in TP4, otherwise equals 1.0 in TP5 (Pa)
+      real, parameter :: Sslp=100.      
+
       yrflag=3
       if (yrflag/=3) then 
          write(lp,*) 'Random forcing only for yrflag=3'
@@ -313,8 +316,7 @@ contains
          fcor=2*sin(40./radtodeg)*2*pi/86400; ! Constant 
 
          ! typical pressure gradient  change it from default mBar in TP4 to Pa
-         wprsfac=sqrt(vars%slp)/(rh*minscpx)
-         !wprsfac=100.*sqrt(vars%slp)/(rh*minscpx)
+         wprsfac=Sslp*sqrt(vars%slp)/(rh*minscpx)
 
          ! results in this typical wind magnitude
          wprsfac=wprsfac/fcor
@@ -343,7 +345,7 @@ contains
             !dpresx(ix,jy) = &
             !   100.*(ran1%slp(ix,jy) - ran1%slp(ix-1,jy))/ &
             !   scpx(ix,jy)
-            dpresx(ix,jy) = (ran1%slp(ix,jy) - ran1%slp(ix-1,jy))/ &
+            dpresx(ix,jy) = Sslp*(ran1%slp(ix,jy) - ran1%slp(ix-1,jy))/ &
                              scpx(ix,jy)
             dpresx(ix,jy)=dpresx(ix,jy)*wprsfac
          else
@@ -357,7 +359,7 @@ contains
          !   dpresy(ix,jy) = &
          !      100.*(ran1%slp(ix,jy) - ran1%slp(ix,jy-1))/ &
          !      scpy(ix,jy)
-            dpresy(ix,jy) = (ran1%slp(ix,jy) - ran1%slp(ix,jy-1))/ &
+            dpresy(ix,jy) = Sslp*(ran1%slp(ix,jy) - ran1%slp(ix,jy-1))/ &
                              scpy(ix,jy)
             dpresy(ix,jy)=dpresy(ix,jy)*wprsfac
          else
@@ -370,12 +372,11 @@ contains
 
 
 
-!$OMP PARALLEL DO PRIVATE (ix,jy,fcor,ucor,vcor,ueq,veq,wcor)             
+!$OMP PARALLEL DO PRIVATE (ix,jy,fcor,ucor,vcor, & 
+!$OMP&                  ueq,veq,wcor)      &       
 !$OMP&SCHEDULE(STATIC,jblk)
       do jy=1,jdm
       do ix=1,idm
-
-
 
          ! Coriolis balance (at 40 deg)
          !fcor=2*sin(max(abs(plat(ix,jy)),20.)/radtodeg)*2*pi/86400;
@@ -414,16 +415,21 @@ contains
                            -0.5*vars%precip**2)  
          synrelhum(ix,jy) = min(max(synrelhum(ix,jy),0.0),1.0)
          synwndspd(ix,jy) = max(synwndspd(ix,jy),0.0)
-!    added at 18Jan 2019 for era-i+all
-         syndswflx(ix,jy) = syndswflx(ix,jy)*(1 + sign(  &
-                     min(1.,abs(ran1%shwflx(ix,jy)))*sqrt(vars%shwflx), &
-                       ran1%shwflx(ix,jy)))
-         synshwflx(ix,jy) = synshwflx(ix,jy)*(1 + sign(  &
-                     min(1.,abs(ran1%shwflx(ix,jy)))*sqrt(vars%shwflx), &
-                       ran1%shwflx(ix,jy)))
-         synradflx(ix,jy) = synradflx(ix,jy)*(1 + sign(  &
-                     min(1.,abs(ran1%radflx(ix,jy)))*sqrt(vars%radflx), &
-                       ran1%radflx(ix,jy)))
+         !    added at 18Jan 2019 for era-i+all
+!         syndswflx(ix,jy) = syndswflx(ix,jy)*(1 + sign(  &
+!                     min(1.,abs(ran1%shwflx(ix,jy)))*sqrt(vars%shwflx), &
+!                       ran1%shwflx(ix,jy)))
+
+         syndswflx(ix,jy) = syndswflx(ix,jy)*exp(ran1%shwflx(ix,jy) &
+                            -0.5*vars%shwflx**2)
+
+!         synradflx(ix,jy) = synradflx(ix,jy)*(1 + sign(  &
+!                     min(1.,abs(ran1%radflx(ix,jy)))*sqrt(vars%radflx), &
+!                       ran1%radflx(ix,jy)))
+
+         synradflx(ix,jy) = synradflx(ix,jy)*exp(ran1%radflx(ix,jy) &
+                           -0.5*vars%radflx**2)
+
       end do
       end do
 !$OMP END PARALLEL DO
@@ -543,10 +549,11 @@ contains
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       if (randf_test) then
          open(10,file='rantest.dat',status='unknown', position='append')
-         write(10,'(i6,5f14.3)') ccount, &
+         write(10,'(i6,6f14.3)') ccount, &
              ran%taux  (50,80)*sqrt(vars%taux),  &
              ran%tauy  (50,80)*sqrt(vars%tauy), &
              ran%airtmp(50,80)*sqrt(vars%airtmp), &
+             ran%relhum(50,80), &
              ran%uwind(50,80), &
              ran%vwind(50,80)
          close(10)
@@ -566,8 +573,6 @@ contains
 
       type(forcing_fields)    , intent(inout) :: ranfld 
       real,                     intent(in)    :: scorr 
-      real, dimension(1-nbdy:idm+nbdy,1-nbdy:jdm+nbdy) :: tmp
-      real, dimension(idm,jdm) :: gtmp
 
       ranfld=0.
       call pseudo2D(ranfld%slp,idm,jdm,1,scorr,fnx,fny)
@@ -583,8 +588,6 @@ contains
       call pseudo2D(ranfld%shwflx,idm,jdm,1,scorr,fnx,fny)
       call pseudo2D(ranfld%radflx,idm,jdm,1,scorr,fnx,fny)
       end subroutine ranfields
-
-
 
 
 

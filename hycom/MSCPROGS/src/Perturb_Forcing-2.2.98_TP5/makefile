@@ -1,8 +1,10 @@
-VPATH = .:RCS:TMP
+VPATH = .:RCS:Build/
 
 .SUFFIXES:
 .SUFFIXES: .o .F90 .f90 .F .f .H .h  .c
 
+
+# Tests dont work with unix make ? (works with gmake ...)
 include ../Make.Inc/make.inc
 
 # This is the hycom utility library
@@ -34,13 +36,23 @@ endif
 
 
 
-TARGET=force_perturb-2.2
+TARGET2=force_perturb-2.2
 
-all:  $(TARGET)
+all:  $(TARGET2)
 
 #################################################################################
-
-OBJECTS= \
+#OBJECTS =\
+#
+#$(TARGET): $(OBJECTS) 
+#	cd Build/ ; $(LD) $(LINKFLAGS) -o ../$(TARGET) $(OBJECTS) $(LIBS)
+#################################################################################
+OBJECTS2= \
+	mod_xc.o \
+	mod_za.o \
+	mod_parameters.o \
+	spherdist.o \
+	wtime.o \
+	mod_grid.o \
 	mod_year_info22.o \
 	m_parse_blkdat.o   \
 	mod_forcing_nersc.o   \
@@ -48,15 +60,14 @@ OBJECTS= \
 	mod_random_forcing.o   \
 	p_force_perturb.o \
 	dayfor.o
-
-$(TARGET): $(OBJECTS) 
-	cd ./TMP ; $(LD) $(LINKFLAGS) -o ../$(TARGET) $(OBJECTS) $(LIBS)
+$(TARGET2): $(OBJECTS2) 
+	cd ./TMP ; $(LD) $(LINKFLAGS) -o ../$(TARGET2) $(OBJECTS2) $(LIBS)
 #################################################################################
 
 install : all
 	mkdir -p ../../bin/
-	cp $(TARGET) ../../bin/
+	cp $(TARGET2) ../../bin/
 
 clean:
-	rm TMP/*.o TMP/*.mod $(TARGET)
+	rm ./TMP/*.o ./TMP/*.mod  $(TARGET2)
 
