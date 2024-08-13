@@ -49,13 +49,13 @@ echo $DOY_NOW-$DOY_NXT
 #
 cd $WORK_HYCOM/$CONFIGNAME/nest/$IEXPT
 for dn in `seq -w ${DOY_NOW} ${DOY_NXT}`; do
-   cp ${DIR_NST}/archv.${yy}_${dn}_00.a .
-   cp ${DIR_NST}/archv.${yy}_${dn}_00.b .
-   cp ${DIR_NST}/archv_fabm.${yy}_${dn}_00.a .
-   cp ${DIR_NST}/archv_fabm.${yy}_${dn}_00.b .
+   cp ${DIR_NST}/archv.${yy}_${dn}_00.a . || { echo "Could not get archv.${yy}_${dn}_00.a file " ; exit 1 ; }
+   cp ${DIR_NST}/archv.${yy}_${dn}_00.b . || { echo "Could not get archv.${yy}_${dn}_00.b file " ; exit 1 ; }
+   cp ${DIR_NST}/archv_fabm.${yy}_${dn}_00.a . || { echo "Could not get archv_fabm.${yy}_${dn}_00.a file " ; exit 1 ; }
+   cp ${DIR_NST}/archv_fabm.${yy}_${dn}_00.b . || { echo "Could not get archv_fabm.${yy}_${dn}_00.b file " ; exit 1 ; }
 done
-cp ${DIR_NST}/ports.nest .
-cp ${DIR_NST}/rmu.a .
-cp ${DIR_NST}/rmu.b .
-cp ${DIR_NST}/rmutr.a .
-cp ${DIR_NST}/rmutr.b .
+cp ${DIR_NST}/ports.nest . || { echo "ports.nest " ; exit 1 ; }
+cp ${DIR_NST}/rmu.a . || { echo "rmu.a " ; exit 1 ; }
+cp ${DIR_NST}/rmu.b . || { echo "rmu.b " ; exit 1 ; }
+cp ${DIR_NST}/rmutr.a . || { echo "rmutr.a " ; exit 1 ; }
+cp ${DIR_NST}/rmutr.b . || { echo "rmutr.b " ; exit 1 ; }

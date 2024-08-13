@@ -59,7 +59,7 @@ $(TARGET2): $(OBJECTS2)
 
 install : all
 	mkdir -p ../../bin
-	cp $(TARGET) $(TARGET2)../../bin/
+	cp $(TARGET) $(TARGET2) ../../bin/
 
 clean:
 	rm $(TARGET) $(TARGET2)
