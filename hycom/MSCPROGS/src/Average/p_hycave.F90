@@ -66,6 +66,8 @@ program p_hycave
       outfile='AVErestart9999_999_99.a'
    else if (trim(ftype)=='archv') then
       outfile='AVE.archv.9999_999_99.a'
+   else if (trim(ftype)=='archm') then
+      outfile='archm.9999_999_99.a'
    else
       print *,'Routine creates a file containing mean values of the '
       print *,'variables contained in the input files. All input files'

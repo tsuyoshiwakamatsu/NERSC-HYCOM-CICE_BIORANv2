@@ -1,0 +1,23 @@
+# intel compilers
+CF90 := ifort
+CF77 := $(CF90)
+CC := icc
+LD :=  $(CF90)
+
+# Flags for fixed/free format
+F90FLG := -free
+F77FLG := -nofree
+
+#Libraries, Netcdf, FFTW, LAPACK
+LIBS := -lnetcdf -lnetcdff -lfftw3 -lmkl
+
+# Compiler flags - real*8 version 
+FFLAGS := -g -convert big_endian -assume byterecl -O2 -r8
+CFLAGSS := -O2
+
+# Define CPP flags consistent with libs above
+CPPFLAGS := -DFFTW -DLAPACK
+
+# Linker flags
+LINKFLAGS := $(FFLAGS)  
+

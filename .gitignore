@@ -4,6 +4,17 @@
 *.log
 *~
 #--------
+bin/expt_post_archive.sh
+bin/expt_post_ensemble.sh
+bin/expt_post_single.sh
+bin/expt_postprocess.sh
+bin/expt_prep_ensemble.sh
+bin/prep_config_rst.sh
+bin/prep_inputs_rst.sh
+hycom/hycom_ALL/hycom_2.2.72_ALL/meanens
+hycom/MSCPROGS/src/Hycom_mean_F77/sample
+hycom/MSCPROGS/src/Hycom_mean.dev
+#--------
 hycom/MSCPROGS/src/Hyc2proj/TMP/
 hycom/MSCPROGS/src/IceDriftNC/TMP/
 #--------

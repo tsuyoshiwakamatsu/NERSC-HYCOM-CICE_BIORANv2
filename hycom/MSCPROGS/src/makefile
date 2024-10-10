@@ -3,6 +3,7 @@
 NERSCLIB=\
 Nersclib \
 
+
 SUBDIRS=\
 Average \
 Barstrf \
@@ -17,7 +18,8 @@ ExtractNC3D \
 FindLayer \
 GridToLL \
 Hyc2proj \
-IceDrift \
+Hycom_mean \
+wIceDrift \
 IceDriftNC \
 Idealized_Grid \
 MkEnsemble \
@@ -29,6 +31,7 @@ Section \
 TRIP \
 ZONAL  \
 Perturb_Forcing-2.2.98_TP5 \
+Perturb_Parameter \
 Model_input-2.2.12 \
 Model_input-2.2.37
 

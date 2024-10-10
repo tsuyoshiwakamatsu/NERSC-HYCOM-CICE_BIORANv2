@@ -39,8 +39,11 @@ restarti=$(blkdat_get_string blkdat.input nmrsti "restart_in")
 nmarcv=$(blkdat_get_string blkdat.input nmarcv "archv.")
 nmarcs=$(blkdat_get_string blkdat.input nmarcs "archs.")
 nmarcm=$(blkdat_get_string blkdat.input nmarcm "archm.")
-#echo $restarto
-#echo $restarti
+#echo "restarto: $restarto"
+#echo "restarti: $restarti"
+#echo "nmarcv  : $nmarcv"
+#echo "nmarcs  : $nmarcs"
+#echo "nmarcm  : $nmarcm"
 #echo "test"
 #exit 1
 

@@ -1,0 +1,9 @@
+README
+README.md
+setup.py
+gridxsec/__init__.py
+gridxsec/gridxsec.py
+gridxsec.egg-info/PKG-INFO
+gridxsec.egg-info/SOURCES.txt
+gridxsec.egg-info/dependency_links.txt
+gridxsec.egg-info/top_level.txt

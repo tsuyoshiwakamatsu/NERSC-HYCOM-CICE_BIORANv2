@@ -45,7 +45,7 @@ mkdir -p ./nest/$IEXPT
 DOY_NOW=$(date -d "$DATE_NOW" +%j)
 DOY_NXT=$(date -d "$DATE_NXT" +%j)
 yy=$(date -d "$DATE_NOW" +%Y)
-echo $DOY_NOW-$DOY_NXT
+#echo $DOY_NOW-$DOY_NXT
 #
 cd $WORK_HYCOM/$CONFIGNAME/nest/$IEXPT
 for dn in `seq -w ${DOY_NOW} ${DOY_NXT}`; do

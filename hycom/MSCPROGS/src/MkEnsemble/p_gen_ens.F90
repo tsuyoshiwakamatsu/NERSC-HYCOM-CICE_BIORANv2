@@ -127,7 +127,8 @@
          print '(a)','Creating new ensemble members - HYCOM:'
       endif
 
-      do iens=2,ensdim  
+      !do iens=2,ensdim  !TW [2024.08.14] Change the 1st ensemble member from 2 to 1
+      do iens=1,ensdim  
 
          ! set file names
          write(cmem,'(i3.3)') iens

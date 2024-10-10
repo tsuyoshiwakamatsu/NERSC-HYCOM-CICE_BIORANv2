@@ -1,0 +1,55 @@
+OBJDIR := TMP
+
+include ../Make.Inc/make.inc
+
+# This is the hycom utility library
+# NB: Path is relative to the current dir
+INCDIR := ../../include
+
+# This is the hycom utility includes (modules)
+# NB: Path is relative to the current dir
+LIBDIR := ../../lib
+
+LIBS := $(LIBS) -L$(LIBDIR) -lhycnersc
+
+CPPFLAGS:= $(CPPFLAGS)
+
+TARGET := hycave
+SRC := p_hycave.F90
+OBJECTS := $(SRC:%.F90=$(OBJDIR)/%.o)
+
+TARGET2 := ensave
+SRC2 := p_ensave.F90
+OBJECTS2 := $(SRC2:%.F90=$(OBJDIR)/%.o)
+
+# Ensure the object directory exists
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
+
+# Suffix rules
+.SUFFIXES: .F .F90 .o
+
+# Rule to compile .F90 files into .o files in $(OBJDIR)
+$(OBJDIR)/%.o: %.F90 | $(OBJDIR)
+	$(CF90) $(CPPFLAGS) $(FFLAGS) $(F90FLG) -I$(INCDIR) -c $< -o $@
+
+$(OBJDIR)/%.o: %.F | $(OBJDIR)
+	$(CF77) $(CPPFLAGS) $(FFLAGS) $(F77FLG) -I$(INCDIR) -c $< -o $@
+
+# Rule to link object files into the executable
+$(TARGET): $(OBJECTS)
+	$(LD) $(LINKFLAGS) -o $@ $(OBJECTS) $(LIBS)
+
+$(TARGET2): $(OBJECTS2)
+	$(LD) $(LINKFLAGS) -o $@ $(OBJECTS2) $(LIBS)
+
+# Rule to clean up old files
+clean:
+	rm -f $(TARGET) $(TARGET2)
+	rm -f $(OBJECTS) $(OBJECTS2)
+	rm -rf $(OBJDIR) || true
+
+# Default target
+all: $(TARGET) $(TARGET2)
+
+.PHONY: all clean

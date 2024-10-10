@@ -1,7 +1,7 @@
 #!/bin/bash
 set -u
 
-source ran_common_rst.src || { echo "Could not source ./common_ran.src "; exit 1; }
+source common_ran.src || { echo "Could not source ./common_ran.src "; exit 1; }
 
 # Configure REGION.src
 
@@ -13,14 +13,11 @@ sed -i "/^export NHCROOT=/c export NHCROOT=$HOME_HYCOM/${HYCOM_REPO}" REGION.src
 # Configure EXPT.src
 
 cd $WORK_HYCOM/$CONFIGNAME/expt_$NEWEXPERIMENT
-#echo ""                                                >> EXPT.src
-#echo "# add new parameters for FABM and ICE"           >> EXPT.src
-#echo "export MXBLCKS=${MXBLCKS}"                       >> EXPT.src # maximal number of ice blocks 
-#echo "export COMPILE_BIOMODEL=\"${COMPILE_BIOMODEL}\"" >> EXPT.src # FABM coupler ON ("yes") or OFF ("no")
-sed -i "/^T=/c T=\"$T\"" EXPT.src                                  # topography version
+
+sed -i "/^T=/c T=\"$T\"" EXPT.src                                                              # topography version
 sed -i "/^export NMPI=/c export NMPI=$NMPI" EXPT.src
-sed -i "/^export MXBLCKS=/c export MXBLCKS=$MXBLCKS" EXPT.src
-sed -i "/^export COMPILE_BIOMODEL=/c export COMPILE_BIOMODEL=\"${COMPILE_BIOMODEL}\"" EXPT.src
+sed -i "/^export MXBLCKS=/c export MXBLCKS=$MXBLCKS" EXPT.src                                  # maximal number of ice blocks 
+sed -i "/^export COMPILE_BIOMODEL=/c export COMPILE_BIOMODEL=\"${COMPILE_BIOMODEL}\"" EXPT.src # FABM coupler ON ("yes") or OFF ("no")
 
 # Configure blkdat.input
 
@@ -38,6 +35,7 @@ declare -A replacements=(
     ["relax "]="$RELAX"  # physics relaxation: 0-relaxation off; 1-relaxation on
     ["ntracr"]="$NTRACR" # BGC on/off: 0-physics only; 1-biology restart; -1-biology initialized with climatology
     ["trcrlx"]="$TRCRLX" # BGC relaxation: 0-relaxation off; 1-relaxation on
+    ["meanfq"]="$MEANFQ" # number of days between model diagnostics (time averaged) [day]
     ["rstrfq"]="$RSTRFQ" # frequency of model restart dump [day] Note: Only integer. Do not use float
     ["lbflag"]="$LBFLAG" # lateral barotropic bndy flag (0=none, 1=port, 2=input)
     ["bnstfq"]="$BNSTFQ" # number of days between baro nesting archive input

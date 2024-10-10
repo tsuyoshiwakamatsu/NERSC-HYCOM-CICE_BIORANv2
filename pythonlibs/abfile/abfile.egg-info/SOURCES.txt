@@ -1,0 +1,12 @@
+.gitignore
+README
+README.md
+setup.py
+abfile/LICENCE.md
+abfile/__init__.py
+abfile/abfile.py
+abfile/test.py
+abfile.egg-info/PKG-INFO
+abfile.egg-info/SOURCES.txt
+abfile.egg-info/dependency_links.txt
+abfile.egg-info/top_level.txt

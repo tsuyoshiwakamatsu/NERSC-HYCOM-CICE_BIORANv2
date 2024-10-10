@@ -1,0 +1,12 @@
+.gitignore
+LICENSE
+README
+README.md
+setup.py
+modelgrid/__init__.py
+modelgrid/confmap.py
+modelgrid/grid.py
+modelgrid.egg-info/PKG-INFO
+modelgrid.egg-info/SOURCES.txt
+modelgrid.egg-info/dependency_links.txt
+modelgrid.egg-info/top_level.txt

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Date in YYYYMMDD format
+input_date=$1
+
+# Convert to Julian date
+julian_date=$(date -d "${input_date:0:4}-${input_date:4:2}-${input_date:6:2}" +%j)
+
+echo $julian_date

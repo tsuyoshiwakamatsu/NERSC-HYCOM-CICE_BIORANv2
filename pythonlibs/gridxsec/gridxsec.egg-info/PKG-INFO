@@ -1,0 +1,14 @@
+Metadata-Version: 2.1
+Name: gridxsec
+Version: 0.0.1
+Summary: A module for creating crossections on 2d grids.
+Home-page: http://github.com/knutalnersc/gridxsec
+Author: Knut Lisaeter
+Author-email: knutal@gmail.com
+License: MIT
+Keywords: crossection
+Classifier: Development Status :: 3 - Alpha
+Classifier: Topic :: Utilities
+Classifier: License :: OSI Approved :: MIT License
+
+blah blah blah

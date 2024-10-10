@@ -6,6 +6,8 @@
 # --- Tunable parameters in ../../config/$(ARCH)_setup
 #
 
+include env.mk
+
 .SUFFIXES: 
 .SUFFIXES: .c .F .f .o
 
@@ -28,10 +30,10 @@ include ../../config/$(ARCH)_setup
 #
 
 all:
-	/bin/csh Make_all.com
+	csh Make_all.com
 
 clean:
-	/bin/rm *.o *.a *.mod M*log *mean *std *diff *wsum
+	rm *.o *.a *.mod M*log *mean *std *diff *wsum hycom_diff hycom_mean hycom_std hycom_wsum hesmf_mean hesmf_std
 
 MODS     =	mod_mean.o mod_mean_esmf.o mod_xc.o mod_za.o wtime.o zh.o
 
