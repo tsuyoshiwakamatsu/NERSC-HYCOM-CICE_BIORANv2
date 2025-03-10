@@ -108,7 +108,6 @@ type hycomfile
    character(len=80) :: filebase ='', ftype=''
    character(len=8), pointer :: cfld (:)
    integer         , pointer, dimension(:) :: coord, tlevel
-   real*8          , pointer, dimension(:) :: dens, rday
 
    ! Time info
    integer           :: iyear = 0
@@ -197,8 +196,8 @@ contains
    df%start_iyear=0
    df%start_iday =0
 
-   !open(nop,file='file002.b',status='old')
-   open(nop,file=trim(df%filebase)//'.b',status='old')
+   open(nop,file='file002.b',status='old')
+   !open(nop,file=trim(df%filebase)//'.b',status='old')
    if (trim(df%ftype)=='restart') then
       read(nop,'(a)') c80 ; ind=index(c80,'='); 
       read(c80(ind+1:),*) df%iexpt, df%iversn, df%yrflag
@@ -454,7 +453,7 @@ contains
     character(len=5) :: char5
     character(len=8) :: char8
     integer          :: ios, nop, nrec, coord, nstep, indx, irec,tlevel
-    real             :: xmin, xmax, dens, rday
+    real             :: xmin, xmax
     logical          :: ex
 
     inquire(exist=ex,file=trim(df%filebase)//'.b')
@@ -472,7 +471,7 @@ contains
     ! Read until we get the index we want
     nrec=0 ; ios=0
     do while(ios==0)
-       call readFieldEntry(df%ftype,char8,nstep,rday,coord,dens,tlevel,xmin,xmax,nop,ios)
+       call readFieldEntry(df%ftype,char8,coord,tlevel,xmin,xmax,nop,ios)
        nrec=nrec+1
        !print *,nrec,char8,coord,tlevel,ios
     end do
@@ -480,20 +479,16 @@ contains
 
     rewind(nop) 
     call skipHeader(df%ftype,nop)
-    allocate(df%rday   (nrec))
     allocate(df%cfld   (nrec))
     allocate(df%coord  (nrec))
-    allocate(df%dens   (nrec))
     allocate(df%tlevel (nrec))
     ios=0
     do irec=1,nrec
-       call readFieldEntry(df%ftype,char8,nstep,rday,coord,dens,tlevel,xmin,xmax,nop,ios)
+       call readFieldEntry(df%ftype,char8,coord,tlevel,xmin,xmax,nop,ios)
        !print *,irec,char8,coord,tlevel
-       df%rday  (irec)=rday
-       df%cfld  (irec)=char8
-       df%coord (irec)=coord
-       df%dens  (irec)=dens
-       df%tlevel(irec)=tlevel
+       df%cfld (irec)=char8
+       df%coord  (irec)=coord
+       df%tlevel (irec)=tlevel
     end do
     close(nop)
     end subroutine
@@ -502,19 +497,19 @@ contains
 !!!!!!!!!!! Header processing - one variable item  !!!!!!!!!!!!
 
     ! Read one line of variable info and parse it
-    subroutine readFieldEntry(ftype,cfld,nstep,rday,coord,dens,tlevel,xmin,xmax,nop,ios)
+    subroutine readFieldEntry(ftype,cfld,coord,tlevel,xmin,xmax,nop,ios)
     implicit none
     character(len=*), intent(in) :: ftype
     character(len=8), intent(out) :: cfld
-    integer         , intent(out) :: coord,tlevel,ios,nstep
-    real            , intent(out) :: xmin, xmax, dens, rday
+    integer         , intent(out) :: coord,tlevel,ios
+    real            , intent(out) :: xmin, xmax
     integer         , intent(in)  :: nop
+    integer :: nstep
+    real    :: dens, rday
 
     ! TODO: make sure this works properly - make it more robust
     if (trim(ftype)=='restart') then
        read(nop,4100,iostat=ios) cfld,coord,tlevel,xmin,xmax
-       nstep=0
-       dens=0.0
     else if (trim(ftype)=="nersc_daily" .or. trim(ftype)=="nersc_weekly") then
        read(nop,117,iostat=ios) cfld,nstep,rday,coord,dens,xmin,xmax
        tlevel=1
@@ -535,12 +530,12 @@ contains
 
 
     ! Read one line of variable info and parse it
-    subroutine writeFieldEntry(ftype,cfld,nstep,rday,coord,tlevel,dens,xmin,xmax,nop,ios)
+    subroutine writeFieldEntry(ftype,cfld,coord,tlevel,xmin,xmax,nop,ios)
     implicit none
     character(len=*), intent(in)  :: ftype
     character(len=*), intent(in)  :: cfld
-    integer         , intent(in)  :: coord,tlevel,nstep
-    real            , intent(in)  :: xmin, xmax, dens, rday
+    integer         , intent(in)  :: coord,tlevel
+    real            , intent(in)  :: xmin, xmax
     integer         , intent(in)  :: nop
     integer         , intent(out) :: ios
     character(len=8) :: cfld2
@@ -549,12 +544,10 @@ contains
     if (trim(ftype)=='restart') then
        write(nop,4100,iostat=ios) cfld2,coord,tlevel,xmin,xmax
     else if (trim(ftype)=="nersc_daily" .or. trim(ftype)=="nersc_weekly") then
-       write(nop,117,iostat=ios) cfld,nstep,rday,coord,dens,xmin,xmax
-       !write(nop,117,iostat=ios) cfld2,0,0.,coord,0.,xmin,xmax
+       write(nop,117,iostat=ios) cfld2,0,0.,coord,0.,xmin,xmax
     else if (trim(ftype)=="archv".or.trim(ftype)=="archv_wav"&
              .or.trim(ftype)=="archm".or.trim(ftype)=="archs") then
-       write(nop,118,iostat=ios) cfld,nstep,rday,coord,dens,xmin,xmax
-       !write(nop,118,iostat=ios) cfld2,0,0.,coord,0.,xmin,xmax
+       write(nop,118,iostat=ios) cfld2,0,0.,coord,0.,xmin,xmax
     else
        print *,'writeFieldEntry> unknown file type: '//trim(ftype)
        stop
@@ -896,7 +889,7 @@ contains
 
    subroutine HFWriteField(df,field,idm,jdm,cfld,coord,tlevel,indx)
    implicit none
-   type(hycomfile) , intent(in) :: df
+   type(hycomfile) , intent(in) ::df
    integer,          intent(in) :: idm,jdm,coord,indx,tlevel
    real,             intent(in) :: field(idm,jdm)
    character(len=*), intent(in) :: cfld
@@ -910,7 +903,7 @@ contains
    call WRITERAW(A,AMN,AMX,IDM,JDM,.false.,spval,trim(df%filebase)//'.a',indx)
    xmax=AMX ; xmin=AMN
    open(nop,file=trim(df%filebase)//'.b',action='write',form='formatted',status='old',position='append',iostat=ios)
-   call writeFieldEntry(df%ftype,cfld,df%nstep,df%rday(indx),coord,tlevel,df%dens(indx),xmin,xmax,nop,ios)
+   call writeFieldEntry(df%ftype,cfld,coord,tlevel,xmin,xmax,nop,ios)
    close(nop)
    end subroutine HFWriteField
 

@@ -19,7 +19,7 @@ FindLayer \
 GridToLL \
 Hyc2proj \
 Hycom_mean \
-wIceDrift \
+IceDrift \
 IceDriftNC \
 Idealized_Grid \
 MkEnsemble \

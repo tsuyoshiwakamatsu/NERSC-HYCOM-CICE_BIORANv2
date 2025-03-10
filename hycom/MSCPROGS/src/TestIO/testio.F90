@@ -3,6 +3,7 @@ program testio
     use mod_za
     use mod_parameters
     use mod_hycomfile_io
+    use netcdf
     implicit none
     character(len=80) :: infile,ftype,outfile
 
@@ -65,9 +66,10 @@ program testio
     !read(nop,116) ctitle,iversn
     read(nop,116) ctitle,iversn,iexpt,yrflag, &
          lidm,ljdm,lkdm,start_iyear,start_iday ,  &
-         iyear,iday,count ,
-         ihour=12 ,
-         fyear_loc = iyear + min((iday + ihour)/365.,1.)
+         iyear,iday,count
+
+    ihour=12
+    fyear_loc = iyear + min((iday + ihour)/365.,1.)
          
     print *, ctitle(1)
     print *, ctitle(2)

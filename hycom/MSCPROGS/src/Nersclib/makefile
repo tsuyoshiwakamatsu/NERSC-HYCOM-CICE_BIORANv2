@@ -42,6 +42,7 @@ LIB_NERSC_OBJECTS= spherdist.o\
 						 mod_parameters.o\
 						 mod_year_info.o\
 						 mod_hycomfile_io.o \
+						 mod_hycomfile_io_ex.o \
 						 mod_grid.o \
 						 mod_spline_calc.o
 $(LIB_NERSC) : $(LIB_NERSC)($(LIB_NERSC_OBJECTS))

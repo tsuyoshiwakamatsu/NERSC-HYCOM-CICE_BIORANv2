@@ -3,6 +3,7 @@
 *.mod
 *.log
 *~
+*.org
 #--------
 bin/expt_post_archive.sh
 bin/expt_post_ensemble.sh

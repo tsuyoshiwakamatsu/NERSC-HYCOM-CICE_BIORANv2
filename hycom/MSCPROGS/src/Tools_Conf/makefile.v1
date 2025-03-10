@@ -1,0 +1,64 @@
+VPATH = .:RCS:TMP
+
+.SUFFIXES:
+.SUFFIXES: .o .F90 .F
+
+include ../Make.Inc/make.inc
+
+LIBS:= $(LIBS) -L../../lib/ -lhycnersc
+INCLUDE:= $(INCLUDE) -I../../include/
+
+# Rules for running cpp and updating files in TMP directory
+.F90.o:
+	$(CF90) -c $(CPPFLAGS) $(FFLAGS) $(F90FLG) $(INCLUDE) -o $*.o $<
+
+.F.o:
+	$(CF77) -c $(CPPFLAGS) $(FFLAGS) $(F77FLG) $(INCLUDE)  -o $*.o $<
+
+TARGET1 = get_meanssh
+TARGET2 = get_depths
+TARGET3 = get_config
+
+all: $(TARGET1) $(TARGET2) $(TARGET3)
+
+###############################################################################
+# object files
+OBJS1 = get_meanssh.o m_io_hycom.o m_io_direct.o m_io_binary.o m_get_mod_cnfg.o qmpi.o
+OBJS2 = get_depths.o m_io_hycom.o m_io_direct.o m_io_binary.o m_get_mod_cnfg.o qmpi.o
+OBJS3 = get_config.o m_io_hycom.o m_io_direct.o m_io_binary.o m_get_mod_cnfg.o qmpi.o
+
+$(TARGET1):  $(OBJS1)
+	$(LD) $(LINKFLAGS) -o $(TARGET1) $(OBJS1) $(LIBS)
+
+$(TARGET2):  $(OBJS2)
+	$(LD) $(LINKFLAGS) -o $(TARGET1) $(OBJS1) $(LIBS)
+
+$(TARGET3):  $(OBJS3)
+	$(LD) $(LINKFLAGS) -o $(TARGET1) $(OBJS3) $(LIBS)
+
+# dependencies tree
+
+get_depths.o: get_depths.F90 m_io_hycom.o m_io_direct.o m_io_binary.o m_get_mod_cnfg.o qmpi.o
+
+get_config.o: get_config.F90 m_io_hycom.o m_io_direct.o m_io_binary.o m_get_mod_cnfg.o qmpi.o
+
+get_meanssh.o: get_meanssh.F90 m_io_hycom.o m_io_direct.o m_io_binary.o m_get_mod_cnfg.o qmpi.o
+
+m_get_mod_cnfg.o: m_get_mod_cnfg.F90 m_io_hycom.o qmpi.o
+
+m_io_hycom.o: m_io_hycom.F90
+
+m_io_direct.o: m_io_direct.F90
+
+m_io_binary.o: m_io_binary.F90
+
+qmpi.o: qmpi.F90
+
+###############################################################################
+
+clean:
+	rm *.o *.mod *.f *.f90 $(TARGET)
+
+install : all
+	mkdir -p ../../bin
+	cp $(TARGET) ../../bin
