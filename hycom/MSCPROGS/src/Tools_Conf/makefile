@@ -55,4 +55,4 @@ qmpi.o: qmpi.F90
 
 # Clean rule
 clean:
-	rm -f *.o *.mod *.f *.f90 $(TARGETS)
+	rm -f *.o *.mod *.f *.f90

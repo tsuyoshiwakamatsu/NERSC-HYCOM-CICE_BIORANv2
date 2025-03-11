@@ -47,10 +47,14 @@ program main
   !    stop '(read_meanssh)'
   !end if
   err = NF90_OPEN(ncfile,NF90_NOCLOBBER,ncid)
+  write(*,*) "err in NF90_OPEN", err
   err = NF90_INQ_VARID(ncid,'meanssh',varid)
+  write(*,*) "err in NF90_INQ_VARID", err
   err = NF90_GET_VAR(ncid,varid,dvar2d)
+  write(*,*) "err in NF90_GET_VAR", err
   err = NF90_CLOSE(ncid)
-
+  write(*,*) "err in NF90_CLOSE", err
+  
   fname='meanssh'//trim(adjustl(str_idm))//'x'//trim(adjustl(str_jdm))//'.uf'
   call open_dble_var2d(20,fname,idm,jdm,'new')
   !dvar2d = real(var2d, kind=8)  
