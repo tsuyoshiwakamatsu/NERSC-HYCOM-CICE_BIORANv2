@@ -1,0 +1,5 @@
+export nens=80
+export initens_atm="--init"  # "--init"/"--clone"                      ## Atmospheric forcing
+export initens_rst="--init"  # "--init"/"--clone"/"--copy"             ## Hycom restart
+export initens_ice="--clone" # "--init"/"--clone"/"--copy"             ## CICE restart. Only --clone option is available
+export initens_bgc="--init"  # "--init"/"--clone"/"--copy"/"--perturb  ## FABM parameters

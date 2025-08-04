@@ -1,0 +1,38 @@
+export NMPI=504
+export HYCOM_REPO=NERSC-HYCOM-CICE_BIORANv2                      # HYCOM-CICE repository name
+
+export CONFIGNAME="TP2a0.10"   # configuration name 
+export NEWEXPERIMENT=04.1      # new experiment number
+export T="04"                  # topography version number
+export COMPILE_BIOMODEL="yes"  # turn on/off ("yes/no") BGC (FABM-ECOSMO) module
+export MXBLCKS=9               # maximal number of ice blocks relates to MPI cores distribution
+export ICECLIM=0               # prepare initial ice file from climatology (1) or not (otherwise)
+export INITFLAG=""             # start physics from climatology "--init" or from restart ""
+export NTRACR=1                # BGC on/off: 0-physics only; 1-biology restart; -1-biology initialized with climatology
+export MEANFQ=0                # archive file (average) dumping frequency [day]
+export RSTRFQ=3                # restart file dumping frequency [day]
+export RELAX=0                 # physics relaxation: 0-relaxation off; 1-relaxation on
+export TRCRLX=1                # BGC relaxation: 0-relaxation off; 1-relaxation on
+export LBFLAG=2                # lateral barotropic bndy flag (0=none, 1=port, 2=input) (default:0)
+export BNSTFQ=1                # number of days between baro nesting archive input (default:0)
+export NESTFQ=1                # number of days between 3-d  nesting archive input (default:0)
+
+export USERNAME=$(whoami)                                        # your username
+export SHRTNAME="$(echo "$CONFIGNAME" | sed -E 's/[a-z].*$//')"  # eg. TP2a0.10 > TP2
+export HOME_HYCOM=/cluster/home/${USERNAME}/${SHRTNAME}          # HYCOM-CICE home directory
+export HOME_FABM=/cluster/home/${USERNAME}/FABM                  # FABM(ECOSMO) home directory
+export WORK_HYCOM=/cluster/work/users/${USERNAME}/${SHRTNAME}    # HYCOM-CICE work directory
+export LIB_PYTHON=$HOME_HYCOM/$HYCOM_REPO/pythonlibs             # NERSC hycom python libraries directory
+export IEXPT=$(echo "$NEWEXPERIMENT" | sed 's/\.//')             # eg. "03.0" > "030" 
+#export IEXPT=$(expr 10 \* $(printf "%.0f" $NEWEXPERIMENT) | xargs printf "%03d") # eg. "03.0" > "030"
+export BIN_MSCPROGS=$HOME_HYCOM/$HYCOM_REPO/hycom/MSCPROGS/bin   # MSCPROGS bin diectory
+export BIN_HYCOM=$WORK_HYCOM/$CONFIGNAME/bin                     # HYCOM bin diectory
+export PATH="$BIN_HYCOM:$BIN_MSCPROGS:$PATH"
+
+# required in prep_inputs_rst.sh
+
+#export DIR_RST=/nird/datalake/NS9481K/shuang/TP2_output/expt_04.2 # restart 1993-2021
+#export DIR_NST=/nird/datalake/NS9481K/shuang/nest/TP2_expt042     # nesting 1993-2016
+#export DIR_NST=/nird/projects/NS9481K/shuang/nest/TP2_expt042     # nesting 2017-2021
+export DIR_RST=/cluster/projects/nn9481k/TP2_output/expt_04.2   # restart 
+export DIR_NST=/cluster/projects/nn9481k/TP2_nest/expt_04.2     # nesting

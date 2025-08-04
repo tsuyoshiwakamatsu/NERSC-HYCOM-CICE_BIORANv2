@@ -97,8 +97,7 @@ export VELDF4=`grep "'veldf4' =" blkdat.input | awk '{printf("%f", $1)}'`
 export KAPREF=`grep "'kapref' =" blkdat.input | awk '{printf("%f", $1)}'`
 export VSIGMA=`grep "'vsigma' =" blkdat.input | awk '{printf("%1d", $1)}'`
 export FLXOFF=`grep "'flxoff' =" blkdat.input | awk '{printf("%1d", $1)}'`
-#export STDFLG=`grep "'stdflg' =" blkdat.input | awk '{printf("%1d", $1)}'`
-export STDFLG=0
+export STDFLG=`grep "'stdflg' =" blkdat.input | awk '{printf("%1d", $1)}'`
 export BNSTFQ=$(blkdat_get blkdat.input bnstfq)
 export NESTFQ=$(blkdat_get blkdat.input nestfq)
 export THKDF2=$(blkdat_get blkdat.input thkdf2)
@@ -606,25 +605,22 @@ else
 
    #HYCOM restart
    filename=${restarti}${start_year}_${start_oday}_${start_hour}_${start_hsec}
-   echo $D/${filename}_mem001.a
 
    # Try to fetch restart from data dir $D
    if [ -f $D/${filename}.a -a -f $D/${filename}.b ] ; then
       echo "using HYCOM restart files ${filename}.[ab] from data dir $D"
       cp $D/${filename}.a .
       cp $D/${filename}.b .
-
-#
-# --- Start compute Montg. on the go, to be sure it is computed from the right nesting file.
-#  this is only for OLD TP5 nesting files
-# --- End compute Montg. on the go, to be sure it is computed from the right nesting file.
-#     
-   elif [ -f $D/${filename}_mem001.a -a -f $D/${filename}_mem001.b ]; then
-      echo "using HYCOM restart files ${filename}_mem???.[ab] from data dir $D"
-      for f in $D/${filename}_mem*.? ; do
-         ${plink} $f .
-      done
-
+      # --- Start compute Montg. on the go, to be sure it is computed from the right nesting file.
+      #  this is only for OLD TP5 nesting files
+      # --- End compute Montg. on the go, to be sure it is computed from the right nesting file.
+   elif [ -f $D/${filename}_mem001.a -a -f $D/${filename}_mem001.b ] ; then
+      echo "using HYCOM restart files ${filename}_mem001.[ab] from data dir $D"
+      cp $D/${filename}_mem001.a ${filename}.a
+      cp $D/${filename}_mem001.b ${filename}.b
+      # --- Start compute Montg. on the go, to be sure it is computed from the right nesting file.
+      #  this is only for OLD TP5 nesting files
+      # --- End compute Montg. on the go, to be sure it is computed from the right nesting file.
    else
       tellerror "Could not find HYCOM restart file ${filename}.[ab] in $D"
    fi
@@ -638,14 +634,10 @@ else
          echo "using CICE restart file ${filenameice}.nc from data dir $D"
          cp $D/${filenameice}.nc ${filenameice}.nc
          echo ${filenameice}.nc > ${ice_restart_pointer_file}
-
-      elif [ -f $D/${filenameice}_mem001.nc ]; then
-         echo "using CICE restart file ${filenameice}_mem???.nc from data dir $D"
-         for f in $D/${filenameice}_mem*.nc ; do
-            ${plink} $f cice/.
-         done
-         echo ${filenameice}_mem000.nc > ${ice_restart_pointer_file}
-
+      elif [ -f $D/${filenameice}_mem001.nc ] ; then
+         echo "using CICE restart file ${filenameice}_mem001.nc from data dir $D"
+         cp $D/${filenameice}_mem001.nc ${filenameice}.nc
+         echo ${filenameice}.nc > ${ice_restart_pointer_file}
       else
          tellerror "Could not find CICE restart file ${filenameice} in $D"
       fi

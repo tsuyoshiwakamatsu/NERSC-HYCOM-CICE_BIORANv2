@@ -1,0 +1,5 @@
+export nens=80
+export initens_atm="--init"
+export initens_rst="--init"
+export initens_ice="--clone"
+export initens_bgc="--init"
