@@ -32,6 +32,11 @@ hycom/MSCPROGS/lib/
 hycom/MSCPROGS/src/Tools_Conf/get_config
 hycom/MSCPROGS/src/Tools_Conf/get_depths
 hycom/MSCPROGS/src/Tools_Conf/get_meanssh
+hycom/MSCPROGS/src/Perturb_Parameter/init_param_bio
+hycom/MSCPROGS/src/Perturb_Parameter/ptrb_param_bio
+hycom/MSCPROGS/src/Hycom_mean/hycom_mean
+hycom/MSCPROGS/src/IceDriftNC/icedrift_osisafNC
+hycom/MSCPROGS/src/Perturb_Forcing-2.2.98_TP5/force_perturb-2.2
 #--------
 #--------
 hycom/hycom_ALL/hycom_2.2.72_ALL/relax/src_2.2.35/Make_nemo_archvz
@@ -42,6 +47,7 @@ hycom/hycom_ALL/hycom_2.2.72_ALL/relax/src_2.2.35/nemo_archvz_modified
 hycom/hycom_ALL/hycom_2.2.72_ALL/subregion/src_2.2.12/isubaregion_modified
 hycom/hycom_ALL/hycom_2.2.72_ALL/relax/src_2.2.35/Make_nemo_archvz_biophys
 hycom/hycom_ALL/hycom_2.2.72_ALL/relax/src_2.2.35/nemo_archvz_biophys
+hycom/hycom_ALL/hycom_2.2.72_ALL/relax/src_2.2.35/rmu_linear
 #--------
 #--------
 hycom/hycom_ALL/hycom_2.2.72_ALL/archive/src_2.2.35/Make_archm2ncdf3z
@@ -143,6 +149,8 @@ hycom/MSCPROGS/src/Nersclib/libconfmap.a
 hycom/MSCPROGS/src/Nersclib/libhycnersc.a
 hycom/MSCPROGS/src/Relax/rmunew
 hycom/MSCPROGS/src/Relax/z_woa2013_bio
+hycom/MSCPROGS/src/Relax/z_norcpm
+hycom/MSCPROGS/src/Relax/z_noresm
 hycom/MSCPROGS/src/RelaxToNetCDF/hclimlevels
 hycom/MSCPROGS/src/RelaxToNetCDF/hclimtonc
 hycom/MSCPROGS/src/Relax/z_glodap_co2
@@ -335,6 +343,9 @@ hycom/hycom_ALL/hycom_2.2.72_ALL/bin/hycom_ymdh_wind
 hycom/hycom_ALL/hycom_2.2.72_ALL/bin/hycom_yoflat
 hycom/hycom_ALL/hycom_2.2.72_ALL/bin/hycom_zonal
 hycom/hycom_ALL/hycom_2.2.72_ALL/bin/hycom_zonal_lat
+hycom/hycom_ALL/hycom_2.2.72_ALL/bin/hycom_binning_nc
+hycom/hycom_ALL/hycom_2.2.72_ALL/bin/hycom_profile2s_nc
+hycom/hycom_ALL/hycom_2.2.72_ALL/bin/hycom_profile2z_nc
 hycom/hycom_ALL/hycom_2.2.72_ALL/bin/lonlat_dist
 hycom/hycom_ALL/hycom_2.2.72_ALL/bin/raw2hycom
 hycom/hycom_ALL/hycom_2.2.72_ALL/bin/raw82hycom
@@ -458,6 +469,7 @@ hycom/hycom_ALL/hycom_2.2.72_ALL/relax/src_2.2.35/Make_relaxi
 hycom/hycom_ALL/hycom_2.2.72_ALL/relax/src_2.2.35/Make_relaxv
 hycom/hycom_ALL/hycom_2.2.72_ALL/relax/src_2.2.35/Make_rmu
 hycom/hycom_ALL/hycom_2.2.72_ALL/relax/src_2.2.35/Make_rmu2
+hycom/hycom_ALL/hycom_2.2.72_ALL/relax/src_2.2.35/Make_rmu_linear
 hycom/hycom_ALL/hycom_2.2.72_ALL/relax/src_2.2.35/Make_sst_pf
 hycom/hycom_ALL/hycom_2.2.72_ALL/relax/src_2.2.35/Make_sst_pf_4km
 hycom/hycom_ALL/hycom_2.2.72_ALL/relax/src_2.2.35/Make_tracer_const

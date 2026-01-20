@@ -22,7 +22,7 @@ endif
 setenv A $cwd
 #
 #####foreach d ( archive force meanstd plot relax sample subregion topo )
-foreach d ( force meanstd meanens relax subregion topo archive)
+foreach d ( force meanstd relax subregion topo archive)
 #foreach d ( force meanstd meanens relax subregion topo )
   echo "PROCESSING ${d}/src:"
   cd ${A}/${d}/src

@@ -18,7 +18,8 @@ endif
 setenv A $cwd
 #
 #foreach d ( archive force meanstd plot relax sample subregion topo)
-foreach d ( archive force meanstd meanens plot relax sample subregion topo cice ncom roms)
+#foreach d ( archive force meanstd meanens plot relax sample subregion topo cice ncom roms)
+foreach d ( archive force meanstd plot relax sample subregion topo cice ncom roms)
   echo "CLEANING ${d}/src:"
   cd ${A}/${d}/src
   make clean
